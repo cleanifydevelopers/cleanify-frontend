@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { sendFeedback } from '../api'
 
 export default function Feedback() {
   const nav = useNavigate()
@@ -18,49 +19,33 @@ export default function Feedback() {
     setEmail(savedEmail)
   }, [])
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setMessage('')
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
 
-    try {
-      const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000'
-      
-      const response = await fetch(`${API_BASE}/api/send-feedback`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          email,
-          category: `Rating: ${rating} Star${rating !== 1 ? 's' : ''}`,
-          feedback: feedback || `${rating} star rating`,
-          timestamp: new Date().toISOString()
-        })
+    const payload = {
+      name,
+      email,
+      category: `Rating: ${rating} Star${rating !== 1 ? 's' : ''}`,
+      feedback: feedback || `${rating} star rating`,
+      timestamp: new Date().toISOString()
+    };
+
+    sendFeedback(payload)
+      .then(res => {
+        setMessage('✅ Thank you! Your feedback has been submitted.');
+        setLoading(false);
+        setTimeout(() => {
+          nav('/home');
+        }, 2000);
       })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        setMessage(`❌ ${data.error || 'Failed to send feedback'}`)
-        setLoading(false)
-        return
-      }
-
-      setMessage('✅ Thank you! Your feedback has been received.')
-      setRating(5)
-      setFeedback('')
-      
-      // Redirect to home after 2 seconds
-      setTimeout(() => {
-        nav('/home')
-      }, 2000)
-    } catch (err) {
-      console.error('Error:', err)
-      setMessage('❌ Error sending feedback: ' + err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
+      .catch(err => {
+        console.error('Feedback error:', err);
+        setMessage('❌ Error sending feedback. Please try again.');
+        setLoading(false);
+      });
+  };
 
   return (
     <div className="page feedback">

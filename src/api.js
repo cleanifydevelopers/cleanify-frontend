@@ -99,3 +99,13 @@ export async function deleteToilet(id) {
   if (!res.ok) throw new Error('Failed to delete toilet');
   return res.json();
 }
+
+export async function sendFeedback(payload) {
+  const res = await fetch(`${API_BASE}/api/send-feedback`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error('Failed to send feedback');
+  return res.json();
+}
