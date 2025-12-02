@@ -4,10 +4,13 @@ import { useNavigate } from 'react-router-dom'
 export default function Landing() {
   const nav = useNavigate()
   const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
 
   useEffect(() => {
-    const saved = localStorage.getItem('userName')
-    if (saved) setName(saved)
+    const savedName = localStorage.getItem('userName')
+    const savedEmail = localStorage.getItem('userEmail')
+    if (savedName) setName(savedName)
+    if (savedEmail) setEmail(savedEmail)
   }, [])
 
   const handleContinue = () => {
@@ -15,7 +18,18 @@ export default function Landing() {
       alert('Please enter your name')
       return
     }
+    if (!email.trim()) {
+      alert('Please enter your email')
+      return
+    }
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address')
+      return
+    }
     localStorage.setItem('userName', name)
+    localStorage.setItem('userEmail', email)
     nav('/home')
   }
 
@@ -34,6 +48,25 @@ export default function Landing() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Enter your name"
+          onKeyPress={(e) => e.key === 'Enter' && handleContinue()}
+          style={{
+            width: '100%', 
+            padding: '12px', 
+            border: '2px solid #1e9b8a',
+            borderRadius: '8px',
+            fontSize: '14px',
+            textAlign: 'center'
+          }}
+        />
+
+        <label style={{display: 'block', marginTop: '16px', marginBottom: '8px', fontWeight: '600', color: '#111'}}>
+          What's your email?
+        </label>
+        <input 
+          type="email" 
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
           onKeyPress={(e) => e.key === 'Enter' && handleContinue()}
           style={{
             width: '100%', 
