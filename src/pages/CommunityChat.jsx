@@ -51,7 +51,7 @@ export default function CommunityChat(){
   return (
     <div className="page community-chat">
       <header><h3>💬 Community Chat</h3></header>
-      <main style={{display: 'flex', flexDirection: 'column', paddingTop: 0}}>
+      <main style={{display: 'flex', flexDirection: 'column', paddingTop: 0, height: '100%', overflow: 'hidden'}}>
         <div style={{flex: 1, overflowY: 'auto', padding: '12px'}}>
           {messages.length === 0 ? (
             <div style={{textAlign: 'center', color: '#999', marginTop: '20px'}}>
@@ -85,7 +85,8 @@ export default function CommunityChat(){
           padding: '12px',
           display: 'flex',
           gap: '8px',
-          background: 'white'
+          background: 'white',
+          flexShrink: 0
         }}>
           <input
             type="text"
